@@ -1,10 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nappasam <nappasam@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/27 15:51:06 by nappasam          #+#    #+#             */
+/*   Updated: 2026/07/27 16:24:18 by nappasam         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "codexion.h"
 
-void	error_exit(void)
-{
-	write(2, "Error\n", 6);
-	exit(1);
-}
+
 
 int	is_valid_num(char *s)
 {
@@ -49,8 +57,7 @@ void	assign_value(char **av, t_config *config)
 
 int	validate_range(t_config *config)
 {
-	if (config->number_of_coder == 0
-		|| config->time_to_burnout == 0
+	if (config->number_of_coder == 0 || config->time_to_burnout == 0
 		|| config->time_to_compile == 0
 		|| config->number_of_compiles_required == 0)
 		return (0);
@@ -77,4 +84,3 @@ t_config	parser(int ac, char **av)
 		error_exit();
 	return (config);
 }
-

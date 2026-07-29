@@ -6,7 +6,7 @@
 /*   By: nappasam <nappasam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 15:51:15 by nappasam          #+#    #+#             */
-/*   Updated: 2026/07/27 18:26:58 by nappasam         ###   ########.fr       */
+/*   Updated: 2026/07/28 20:09:06 by nappasam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int	main(int ac, char **av)
         printf("coders right dongle: %d ",table.coders[i].right_dongle);
         printf("\n");
     }
-    
+    launch_simulation(&table);
     cleanup(&table);
 	return (0);
 }

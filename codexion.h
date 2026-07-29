@@ -6,7 +6,7 @@
 /*   By: nappasam <nappasam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 15:51:21 by nappasam          #+#    #+#             */
-/*   Updated: 2026/07/27 18:24:22 by nappasam         ###   ########.fr       */
+/*   Updated: 2026/07/28 20:08:48 by nappasam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ typedef struct s_coder
 	int					right_dongle;
 	pthread_mutex_t		compile_lock;
 	t_table				*table;
+    pthread_t		    thread;  
 }						t_coder;
 
 typedef struct s_table
@@ -92,4 +93,8 @@ void                    dongle_init(t_table *table);
 void                    coders_init(t_table *table);
 void                    table_mutex_init(t_table *table);
 void                    wire_coders(t_table *table);
+long	                get_time_ms(void);
+void	                precise_sleep(long ms);
+void                    *coder_routine(void *arg);
+int	                    launch_simulation(t_table *table);
 #endif

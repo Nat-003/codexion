@@ -6,7 +6,7 @@
 /*   By: nappasam <nappasam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 17:26:21 by nappasam          #+#    #+#             */
-/*   Updated: 2026/07/27 18:19:44 by nappasam         ###   ########.fr       */
+/*   Updated: 2026/07/29 17:16:49 by nappasam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,10 @@ void    table_mutex_init(t_table *table)
     table->print_lock_initiated = 1;
     if (pthread_mutex_init(&table->table_lock, NULL) != 0)
         cleanup_and_exit(table);
-    table->table_lock_initiated = 1;  
+    table->table_lock_initiated = 1;
+    if (pthread_cond_init(&table->table_cond, NULL) != 0)
+        cleanup_and_exit(table);
+    table->table_cond_initiated = 1;
 }
 
 void    wire_coders(t_table *table)

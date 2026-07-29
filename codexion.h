@@ -6,7 +6,7 @@
 /*   By: nappasam <nappasam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 15:51:21 by nappasam          #+#    #+#             */
-/*   Updated: 2026/07/28 20:08:48 by nappasam         ###   ########.fr       */
+/*   Updated: 2026/07/29 17:14:59 by nappasam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,10 +78,13 @@ typedef struct s_table
 	int					is_over;
 	pthread_mutex_t		print_lock;
 	pthread_mutex_t		table_lock;
+    pthread_cond_t      table_cond;
 	int					dongles_initiated;
     int                 coders_initiated;
     int                 print_lock_initiated;
     int                 table_lock_initiated;
+    int                 table_cond_initiated;
+    
 }						t_table;
 
 t_config				parser(int ac, char **av);

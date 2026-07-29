@@ -6,7 +6,7 @@
 /*   By: nappasam <nappasam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 16:24:30 by nappasam          #+#    #+#             */
-/*   Updated: 2026/07/27 16:41:29 by nappasam         ###   ########.fr       */
+/*   Updated: 2026/07/29 18:10:06 by nappasam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,13 @@ void	cleanup(t_table *table)
 {
     int	i;
 
+    if (table->table_cond_initiated)
+        pthread_cond_destroy(&table->table_cond);
     if (table->table_lock_initiated)
         pthread_mutex_destroy(&table->table_lock);
     if (table->print_lock_initiated)
         pthread_mutex_destroy(&table->print_lock);
+
     i = 0;
     while (i < table->coders_initiated)
     {

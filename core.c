@@ -6,7 +6,7 @@
 /*   By: nappasam <nappasam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/28 18:59:19 by nappasam          #+#    #+#             */
-/*   Updated: 2026/07/30 19:05:12 by nappasam         ###   ########.fr       */
+/*   Updated: 2026/07/30 22:33:30 by nappasam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,17 @@ void acquire_pair(t_coder *coder)
     pthread_mutex_lock(&coder->table->table_lock);
     left = &coder->table->dongles[coder->left_dongle];
     right = &coder->table->dongles[coder->right_dongle];
-    while (left->state != DONGLE_FREE || right->state != DONGLE_FREE)
+    while ((left->state != DONGLE_FREE || right->state != DONGLE_FREE)
+    && !coder->table->is_over)
     {
         pthread_cond_wait(&coder->table->table_cond, &coder->table->table_lock);
     }
+    if (coder->table->is_over)
+    {
+        pthread_mutex_unlock(&coder->table->table_lock);
+        return ;
+    }
+    
     left->state = DONGLE_HELD;
     right->state = DONGLE_HELD;
     log_state(coder, "has taken a dongle");
@@ -72,22 +79,39 @@ void release_pair(t_coder *coder)
     pthread_mutex_unlock(&coder->table->table_lock);
 }
 
+int simulation_over(t_table *table)
+{
+    int over;
+
+    pthread_mutex_lock(&table->table_lock);
+    over = table->is_over;
+    pthread_mutex_unlock(&table->table_lock);
+    return over;
+}
+
 void *coder_routine(void *arg)
 {
     t_coder *coder;
-    int iteration;
 
     coder = (t_coder *)arg;
-    iteration = 0;
     coder->last_compile_start = get_time_ms();
-    while (iteration < 20)
+    while (!simulation_over(coder->table))
     {
         acquire_pair(coder);
+        if (simulation_over(coder->table))
+            break ;
         compiling(coder);
         release_pair(coder);
         debugging(coder);
         refactor(coder);
-        iteration++;
+        if (coder->compile_counter == coder->table->config->number_of_compiles_required)
+        {
+            pthread_mutex_lock(&coder->table->table_lock);
+            coder->table->is_over = 1;
+            pthread_cond_broadcast(&coder->table->table_cond);
+            pthread_mutex_unlock(&coder->table->table_lock);
+        }
+        
     }
     return (NULL);
 }

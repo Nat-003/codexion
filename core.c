@@ -6,7 +6,7 @@
 /*   By: nappasam <nappasam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/28 18:59:19 by nappasam          #+#    #+#             */
-/*   Updated: 2026/07/28 20:08:37 by nappasam         ###   ########.fr       */
+/*   Updated: 2026/07/30 19:05:12 by nappasam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,40 @@ void    refactor(t_coder *coder)
     log_state(coder,"is refactoring");
     precise_sleep(coder->table->config->time_to_refactor);
 }
+
+void acquire_pair(t_coder *coder)
+{
+    t_dongle	*left;
+    t_dongle	*right;
+
+    pthread_mutex_lock(&coder->table->table_lock);
+    left = &coder->table->dongles[coder->left_dongle];
+    right = &coder->table->dongles[coder->right_dongle];
+    while (left->state != DONGLE_FREE || right->state != DONGLE_FREE)
+    {
+        pthread_cond_wait(&coder->table->table_cond, &coder->table->table_lock);
+    }
+    left->state = DONGLE_HELD;
+    right->state = DONGLE_HELD;
+    log_state(coder, "has taken a dongle");
+    log_state(coder, "has taken a dongle");
+    pthread_mutex_unlock(&coder->table->table_lock);
+}
+
+void release_pair(t_coder *coder)
+{
+    t_dongle	*left;
+    t_dongle	*right;
+    
+    pthread_mutex_lock(&coder->table->table_lock);
+    left = &coder->table->dongles[coder->left_dongle];
+    right = &coder->table->dongles[coder->right_dongle];
+    left->state = DONGLE_FREE;
+    right->state = DONGLE_FREE;
+    pthread_cond_broadcast(&coder->table->table_cond);
+    pthread_mutex_unlock(&coder->table->table_lock);
+}
+
 void *coder_routine(void *arg)
 {
     t_coder *coder;
@@ -48,7 +82,9 @@ void *coder_routine(void *arg)
     coder->last_compile_start = get_time_ms();
     while (iteration < 20)
     {
+        acquire_pair(coder);
         compiling(coder);
+        release_pair(coder);
         debugging(coder);
         refactor(coder);
         iteration++;

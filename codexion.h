@@ -84,6 +84,8 @@ typedef struct s_table
     int                 print_lock_initiated;
     int                 table_lock_initiated;
     int                 table_cond_initiated;
+	int					print_stop;
+	pthread_t 			monitor;
     
 }						t_table;
 
@@ -100,4 +102,8 @@ long	                get_time_ms(void);
 void	                precise_sleep(long ms);
 void                    *coder_routine(void *arg);
 int	                    launch_simulation(t_table *table);
+void 					log_state(t_coder *coder, char *message);
+void 					*monitoring(void *args);
+int 					simulation_over(t_table *table);
+void 					log_burnout(t_coder *coder, char *message);
 #endif

@@ -43,7 +43,6 @@ int	main(int ac, char **av)
 {
 	t_config    config;
 	t_table     table;
-
 	memset(&table, 0, sizeof(t_table));
 	config = parser(ac, av);
 	table.config = &config;
@@ -58,13 +57,6 @@ int	main(int ac, char **av)
 	table_mutex_init(&table);
     wire_coders(&table);
     table.start_time = get_time_ms();
-    for (size_t i = 0; i < table.config->number_of_coder; i++)
-    {
-        printf("coders number: %d\n",table.coders[i].number);
-        printf("coders left dongle: %d ",table.coders[i].left_dongle);
-        printf("coders right dongle: %d ",table.coders[i].right_dongle);
-        printf("\n");
-    }
     launch_simulation(&table);
     cleanup(&table);
 	return (0);

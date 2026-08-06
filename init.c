@@ -26,6 +26,8 @@ void    dongle_init(t_table *table)
         pthread_mutex_destroy(&table->dongles[i].lock);
         cleanup_and_exit(table);
     }
+    table->dongles[i].state = DONGLE_FREE;
+    table->dongles[i].released_at = 0;
     table->dongles_initiated++;
     i++;
     }

@@ -15,16 +15,36 @@
 void log_state(t_coder *coder, char *message)
 {
     pthread_mutex_lock(&coder->table->print_lock);
+    if (coder->table->print_stop)
+    {
+        pthread_mutex_unlock(&coder->table->print_lock);
+        return ;
+    }
+    else
+    {
+        printf("%ld %d %s\n",(get_time_ms() - coder->table->start_time), coder->number ,message);
+        pthread_mutex_unlock(&coder->table->print_lock);
+    }
+    
+}
+void log_burnout(t_coder *coder, char *message)
+{
+
+    pthread_mutex_lock(&coder->table->print_lock);
     printf("%ld %d %s\n",(get_time_ms() - coder->table->start_time), coder->number ,message);
     pthread_mutex_unlock(&coder->table->print_lock);
+
 }
 
 void    compiling(t_coder *coder)
 {
+    pthread_mutex_lock(&coder->compile_lock);
     coder->last_compile_start = get_time_ms();
-    log_state(coder,"is compiling");
     coder->compile_counter++;
+    pthread_mutex_unlock(&coder->compile_lock);
+    log_state(coder,"is compiling");
     precise_sleep(coder->table->config->time_to_compile);
+    
 }
 
 void    debugging(t_coder *coder)
@@ -38,19 +58,44 @@ void    refactor(t_coder *coder)
     log_state(coder,"is refactoring");
     precise_sleep(coder->table->config->time_to_refactor);
 }
+int is_takeable(t_dongle *d, t_table *table)
+{
+    if (d->state == DONGLE_FREE || (d->state == DONGLE_COOLDOWN && get_time_ms() - d->released_at >= table->config->dongle_cooldown))
+        return 1;
+    else
+        return 0;
+}
+struct timespec	get_deadline(long ms)
+{
+	struct timespec	ts;
+	long			extra_ns;
 
+	clock_gettime(CLOCK_REALTIME, &ts);
+	extra_ns = (ms % 1000) * 1000000L;
+	ts.tv_sec += ms / 1000;
+	ts.tv_nsec += extra_ns;
+	if (ts.tv_nsec >= 1000000000L)
+	{
+		ts.tv_nsec -= 1000000000L;
+		ts.tv_sec += 1;
+	}
+	return (ts);
+}
 void acquire_pair(t_coder *coder)
 {
-    t_dongle	*left;
-    t_dongle	*right;
-
+    t_dongle	    *left;
+    t_dongle	    *right;
+    struct timespec	deadline;
     pthread_mutex_lock(&coder->table->table_lock);
     left = &coder->table->dongles[coder->left_dongle];
-    right = &coder->table->dongles[coder->right_dongle];
-    while ((left->state != DONGLE_FREE || right->state != DONGLE_FREE)
+    right = &coder->table->dongles[coder->right_dongle];    
+    while (((!is_takeable(left, coder->table) || !is_takeable(right, coder->table))
+        || left == right)
     && !coder->table->is_over)
     {
-        pthread_cond_wait(&coder->table->table_cond, &coder->table->table_lock);
+        deadline = get_deadline(1);
+        pthread_cond_timedwait(&coder->table->table_cond,
+        &coder->table->table_lock, &deadline);
     }
     if (coder->table->is_over)
     {
@@ -69,12 +114,16 @@ void release_pair(t_coder *coder)
 {
     t_dongle	*left;
     t_dongle	*right;
+    long        now;
     
     pthread_mutex_lock(&coder->table->table_lock);
+    now = get_time_ms();
     left = &coder->table->dongles[coder->left_dongle];
     right = &coder->table->dongles[coder->right_dongle];
-    left->state = DONGLE_FREE;
-    right->state = DONGLE_FREE;
+    left->state = DONGLE_COOLDOWN;
+    left->released_at = now;
+    right->state = DONGLE_COOLDOWN;
+    right->released_at = now;
     pthread_cond_broadcast(&coder->table->table_cond);
     pthread_mutex_unlock(&coder->table->table_lock);
 }
@@ -94,7 +143,6 @@ void *coder_routine(void *arg)
     t_coder *coder;
 
     coder = (t_coder *)arg;
-    coder->last_compile_start = get_time_ms();
     while (!simulation_over(coder->table))
     {
         acquire_pair(coder);
@@ -104,13 +152,6 @@ void *coder_routine(void *arg)
         release_pair(coder);
         debugging(coder);
         refactor(coder);
-        if (coder->compile_counter == coder->table->config->number_of_compiles_required)
-        {
-            pthread_mutex_lock(&coder->table->table_lock);
-            coder->table->is_over = 1;
-            pthread_cond_broadcast(&coder->table->table_cond);
-            pthread_mutex_unlock(&coder->table->table_lock);
-        }
         
     }
     return (NULL);
@@ -122,6 +163,12 @@ int	launch_simulation(t_table *table)
 
 	table->start_time = get_time_ms();
 	i = 0;
+    while (i < table->config->number_of_coder)
+    {
+        table->coders[i].last_compile_start = get_time_ms();
+        i++;
+    }
+    i = 0;
 	while (i < table->config->number_of_coder)
 	{
 		if (pthread_create(&table->coders[i].thread, NULL,
@@ -129,11 +176,14 @@ int	launch_simulation(t_table *table)
 			return (1);
 		i++;
 	}
-	i = 0;
+    if (pthread_create(&table->monitor, NULL, monitoring, table))
+        return (1);
+    i = 0;
 	while (i < table->config->number_of_coder)
 	{
 		pthread_join(table->coders[i].thread, NULL);
 		i++;
 	}
+    pthread_join(table->monitor, NULL); 
 	return (0);
 }

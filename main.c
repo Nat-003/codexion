@@ -6,25 +6,20 @@
 /*   By: nappasam <nappasam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 15:51:15 by nappasam          #+#    #+#             */
-/*   Updated: 2026/07/28 20:09:06 by nappasam         ###   ########.fr       */
+/*   Updated: 2026/08/06 17:00:06 by nappasam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-static const char	*mode_str(t_sched mode)
-{
-	if (mode == FIFO)
-		return ("fifo");
-	return ("edf");
-}
+
 
 long	get_time_ms(void)
 {
 	struct timeval	tv;
 
 	gettimeofday(&tv, NULL);
-	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
+	return ((long)tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
 void	precise_sleep(long ms)

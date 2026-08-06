@@ -30,7 +30,7 @@ void *monitoring(void *args)
                 pthread_mutex_unlock(&table->print_lock);
                 break ;
             }
-            if (counter == table->config->number_of_compiles_required)
+            if (counter >= table->config->number_of_compiles_required)
                 number_coders_done++;
             i++;         
         }

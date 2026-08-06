@@ -6,7 +6,7 @@
 /*   By: nappasam <nappasam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 15:51:21 by nappasam          #+#    #+#             */
-/*   Updated: 2026/07/29 17:14:59 by nappasam         ###   ########.fr       */
+/*   Updated: 2026/08/06 17:35:48 by nappasam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,14 @@ typedef struct s_table
 	pthread_t 			monitor;
     
 }						t_table;
+
+typedef struct s_heap
+{
+    int data[64];
+    int size;
+    int capacity;
+}               t_heap;
+
 
 t_config				parser(int ac, char **av);
 void					error_exit(void);

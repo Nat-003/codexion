@@ -1,0 +1,13 @@
+{
+   glibc_timedwait_internal_signal
+   Helgrind:Misc
+   obj:/usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so
+   fun:__pthread_cond_wait_common
+   fun:pthread_cond_timedwait@@GLIBC_2.3.2
+   obj:/usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so
+   fun:acquire_pair
+   fun:coder_routine
+   obj:/usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so
+   fun:start_thread
+   fun:clone
+}

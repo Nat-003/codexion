@@ -6,7 +6,7 @@
 /*   By: nappasam <nappasam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 15:51:15 by nappasam          #+#    #+#             */
-/*   Updated: 2026/08/06 17:00:06 by nappasam         ###   ########.fr       */
+/*   Updated: 2026/08/07 18:03:02 by nappasam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,8 @@ int	main(int ac, char **av)
 	coders_init(&table);
 	table_mutex_init(&table);
     wire_coders(&table);
+    if (init_heap(&table.heap, config.number_of_coder))
+        cleanup_and_exit(&table);
     table.start_time = get_time_ms();
     launch_simulation(&table);
     cleanup(&table);

@@ -6,7 +6,7 @@
 /*   By: nappasam <nappasam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 16:24:30 by nappasam          #+#    #+#             */
-/*   Updated: 2026/07/29 18:10:06 by nappasam         ###   ########.fr       */
+/*   Updated: 2026/08/07 17:59:24 by nappasam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ void	cleanup(t_table *table)
     }
     free(table->coders);
     free(table->dongles);
+    free(table->heap.data);
 }
 
 void	cleanup_and_exit(t_table *table)

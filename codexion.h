@@ -6,7 +6,7 @@
 /*   By: nappasam <nappasam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 15:51:21 by nappasam          #+#    #+#             */
-/*   Updated: 2026/08/06 17:35:48 by nappasam         ###   ########.fr       */
+/*   Updated: 2026/08/07 18:38:43 by nappasam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,15 +86,24 @@ typedef struct s_table
     int                 table_cond_initiated;
 	int					print_stop;
 	pthread_t 			monitor;
+    t_heap              heap;
+    long                arrival_counter;
     
 }						t_table;
 
 typedef struct s_heap
 {
-    int data[64];
+    t_request *data;
     int size;
     int capacity;
 }               t_heap;
+
+typedef struct s_request
+{
+    int identity;
+    long    key;
+}           t_request;
+
 
 
 t_config				parser(int ac, char **av);
@@ -114,4 +123,6 @@ void 					log_state(t_coder *coder, char *message);
 void 					*monitoring(void *args);
 int 					simulation_over(t_table *table);
 void 					log_burnout(t_coder *coder, char *message);
+int	                    init_heap(t_heap *heap, int capacity);
+void	                heap_insert(t_heap *heap, t_request value);
 #endif

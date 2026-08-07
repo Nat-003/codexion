@@ -6,7 +6,7 @@
 /*   By: nappasam <nappasam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/28 18:59:19 by nappasam          #+#    #+#             */
-/*   Updated: 2026/07/30 22:33:30 by nappasam         ###   ########.fr       */
+/*   Updated: 2026/08/07 18:56:12 by nappasam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,14 @@ void    refactor(t_coder *coder)
     log_state(coder,"is refactoring");
     precise_sleep(coder->table->config->time_to_refactor);
 }
+
+int am_i_top(t_table *table, t_coder *coder)
+{
+    if(table->heap.data[0].identity == coder->number)
+        return 1;
+    else
+        return 0;
+}
 int is_takeable(t_dongle *d, t_table *table)
 {
     if (d->state == DONGLE_FREE || (d->state == DONGLE_COOLDOWN && get_time_ms() - d->released_at >= table->config->dongle_cooldown))
@@ -81,6 +89,21 @@ struct timespec	get_deadline(long ms)
 	}
 	return (ts);
 }
+
+void enqueue_coder(t_coder *coder)
+{
+    t_request request;
+    
+    request.identity = coder->number;
+    if (coder->table->config->mode == FIFO)
+    {
+        request.key = coder->table->arrival_counter;
+        coder->table->arrival_counter++;
+    }
+    else if (coder->table->config->mode == EDF)
+        request.key = coder->last_compile_start + coder->table->config->time_to_burnout;
+    heap_insert(&coder->table->heap, request);
+}
 void acquire_pair(t_coder *coder)
 {
     t_dongle	    *left;
@@ -102,7 +125,6 @@ void acquire_pair(t_coder *coder)
         pthread_mutex_unlock(&coder->table->table_lock);
         return ;
     }
-    
     left->state = DONGLE_HELD;
     right->state = DONGLE_HELD;
     log_state(coder, "has taken a dongle");

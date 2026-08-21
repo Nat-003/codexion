@@ -110,11 +110,14 @@ void acquire_pair(t_coder *coder)
     t_dongle	    *right;
     struct timespec	deadline;
     pthread_mutex_lock(&coder->table->table_lock);
+    enqueue_coder(coder);
     left = &coder->table->dongles[coder->left_dongle];
     right = &coder->table->dongles[coder->right_dongle];    
-    while (((!is_takeable(left, coder->table) || !is_takeable(right, coder->table))
-        || left == right)
-    && !coder->table->is_over)
+    while (!(am_i_top(coder->table, coder)
+         && is_takeable(left, coder->table)
+         && is_takeable(right, coder->table)
+         && left != right)
+       && !coder->table->is_over)
     {
         deadline = get_deadline(1);
         pthread_cond_timedwait(&coder->table->table_cond,
@@ -125,6 +128,7 @@ void acquire_pair(t_coder *coder)
         pthread_mutex_unlock(&coder->table->table_lock);
         return ;
     }
+    extract_min(&coder->table->heap); 
     left->state = DONGLE_HELD;
     right->state = DONGLE_HELD;
     log_state(coder, "has taken a dongle");

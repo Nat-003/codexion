@@ -47,7 +47,7 @@ typedef struct s_config
 }						t_config;
 
 typedef struct s_table	t_table;
-
+typedef struct s_heap   t_heap;
 typedef struct s_dongle
 {
 	t_dongle_state		state;
@@ -68,6 +68,21 @@ typedef struct s_coder
 	t_table				*table;
     pthread_t		    thread;  
 }						t_coder;
+
+
+typedef struct s_request
+{
+    int identity;
+    long    key;
+}           t_request;
+
+typedef struct s_heap
+{
+    t_request *data;
+    int size;
+    int capacity;
+}               t_heap;
+
 
 typedef struct s_table
 {
@@ -91,18 +106,8 @@ typedef struct s_table
     
 }						t_table;
 
-typedef struct s_heap
-{
-    t_request *data;
-    int size;
-    int capacity;
-}               t_heap;
 
-typedef struct s_request
-{
-    int identity;
-    long    key;
-}           t_request;
+
 
 
 
@@ -125,4 +130,5 @@ int 					simulation_over(t_table *table);
 void 					log_burnout(t_coder *coder, char *message);
 int	                    init_heap(t_heap *heap, int capacity);
 void	                heap_insert(t_heap *heap, t_request value);
+t_request				extract_min(t_heap *heap);
 #endif

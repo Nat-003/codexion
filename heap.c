@@ -70,7 +70,6 @@ void	heap_insert(t_heap *heap, t_request value)
 	sift_up(heap, heap->size);
 	heap->size++;
 }
-
 t_request	extract_min(t_heap *heap)
 {
 	t_request	min;

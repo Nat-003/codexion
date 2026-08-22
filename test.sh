@@ -1,4 +1,4 @@
-for i in $(seq 1 100); do
-    ./a.out 4 410 200 100 100 5 0 fifo > /dev/null || echo "FAILED run $i"
+for i in $(seq 1 20); do
+  ./codexion 4 800 200 100 100 5 0 edf | grep "has taken" | head -8
+  echo "---"
 done
-echo "done"

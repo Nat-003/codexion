@@ -6,7 +6,7 @@
 /*   By: nappasam <nappasam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/06 17:27:48 by nappasam          #+#    #+#             */
-/*   Updated: 2026/08/07 17:45:17 by nappasam         ###   ########.fr       */
+/*   Updated: 2026/08/22 16:22:32 by nappasam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,21 @@ int	init_heap(t_heap *heap, int capacity)
 	return (0);
 }
 
+int	is_before(t_request a, t_request b)
+{
+	if (a.key < b.key)
+		return (1);
+	if (a.key == b.key && a.identity < b.identity)
+		return (1);
+	return (0);
+}
+
 void	sift_up(t_heap *heap, int i)
 {
 	int	parent;
 
 	parent = (i - 1) / 2;
-	while (i > 0 && heap->data[i].key < heap->data[parent].key)
+	while (i > 0 && is_before(heap->data[i], heap->data[parent]))
 	{
 		swap(&heap->data[i], &heap->data[parent]);
 		i = parent;
@@ -51,11 +60,11 @@ void	sift_down(t_heap *heap, int i)
 	while (1)
 	{
 		smallest = i;
-		if (2 * i + 1 < heap->size
-			&& heap->data[2 * i + 1].key < heap->data[smallest].key)
+		if (2 * i + 1 < heap->size && is_before(heap->data[2 * i + 1],
+				heap->data[smallest]))
 			smallest = 2 * i + 1;
-		if (2 * i + 2 < heap->size
-			&& heap->data[2 * i + 2].key < heap->data[smallest].key)
+		if (2 * i + 2 < heap->size && is_before(heap->data[2 * i + 2],
+				heap->data[smallest]))
 			smallest = 2 * i + 2;
 		if (smallest == i)
 			break ;

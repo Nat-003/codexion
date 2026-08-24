@@ -6,7 +6,7 @@
 /*   By: nappasam <nappasam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 15:51:21 by nappasam          #+#    #+#             */
-/*   Updated: 2026/08/24 18:01:48 by nappasam         ###   ########.fr       */
+/*   Updated: 2026/08/24 18:32:18 by nappasam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,17 +123,18 @@ void					log_burnout(t_coder *coder, char *message);
 int						init_heap(t_heap *heap, int capacity);
 void					heap_insert(t_heap *heap, t_request value);
 t_request				extract_min(t_heap *heap);
-void	                compiling(t_coder *coder);
-void	                debugging(t_coder *coder);
-void	                refactor(t_coder *coder);
-int	                    am_i_top(t_table *table, t_coder *coder);
-int	                    is_takeable(t_dongle *d, t_table *table);
-void	                enqueue_coder(t_coder *coder);
-void	                acquiring(t_coder *coder, t_dongle *left, t_dongle *right);
-void	                acquire_pair(t_coder *coder);
-void	                release_pair(t_coder *coder);
-void	                *coder_routine(void *arg);
-void	                set_coder_time(t_table *table);
-struct timespec	        get_deadline(long ms);
-void	                swap(t_request *a, t_request *b);
+void					compiling(t_coder *coder);
+void					debugging(t_coder *coder);
+void					refactor(t_coder *coder);
+int						am_i_top(t_table *table, t_coder *coder);
+int						is_takeable(t_dongle *d, t_table *table);
+void					enqueue_coder(t_coder *coder);
+void					acquiring(t_coder *coder, t_dongle *left,
+							t_dongle *right);
+void					acquire_pair(t_coder *coder);
+void					release_pair(t_coder *coder);
+void					*coder_routine(void *arg);
+void					set_coder_time(t_table *table);
+struct timespec			get_deadline(long ms);
+void					swap(t_request *a, t_request *b);
 #endif

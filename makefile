@@ -1,17 +1,21 @@
-
-
 NAME		= codexion
 
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror -pthread
+CFLAGS		= -Wall -Wextra -Werror -pthread -I.
 
 SRCS		= main.c \
-			  parser.c \
-			  error_handling.c \
-			  init.c \
-			  core.c \
-			  monitor.c \
-			  heap.c
+			  src/parser.c \
+			  src/monitor.c \
+			  src/acquisition/acq1.c \
+			  src/acquisition/acq2.c \
+			  src/binary_heap/heap.c \
+			  src/binary_heap/heap2.c \
+			  src/coder_and_sim/coder_phases.c \
+			  src/coder_and_sim/init.c \
+			  src/coder_and_sim/routine.c \
+			  src/helpers/error_handling.c \
+			  src/helpers/time.c \
+			  src/helpers/logging.c
 
 OBJS		= $(SRCS:.c=.o)
 

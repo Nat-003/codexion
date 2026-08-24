@@ -6,7 +6,7 @@
 /*   By: nappasam <nappasam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/24 17:43:23 by nappasam          #+#    #+#             */
-/*   Updated: 2026/08/24 18:00:24 by nappasam         ###   ########.fr       */
+/*   Updated: 2026/08/24 18:36:26 by nappasam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ void	log_state(t_coder *coder, char *message)
 		pthread_mutex_unlock(&coder->table->print_lock);
 	}
 }
+
 void	log_burnout(t_coder *coder, char *message)
 {
 	pthread_mutex_lock(&coder->table->print_lock);

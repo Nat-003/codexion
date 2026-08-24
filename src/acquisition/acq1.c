@@ -6,7 +6,7 @@
 /*   By: nappasam <nappasam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/24 17:48:55 by nappasam          #+#    #+#             */
-/*   Updated: 2026/08/24 17:50:10 by nappasam         ###   ########.fr       */
+/*   Updated: 2026/08/24 18:43:51 by nappasam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ int	am_i_top(t_table *table, t_coder *coder)
 	else
 		return (0);
 }
+
 int	is_takeable(t_dongle *d, t_table *table)
 {
 	if (d->state == DONGLE_FREE || (d->state == DONGLE_COOLDOWN && get_time_ms()
@@ -56,6 +57,7 @@ void	acquiring(t_coder *coder, t_dongle *left, t_dongle *right)
 	log_state(coder, "has taken a dongle");
 	log_state(coder, "has taken a dongle");
 }
+
 void	acquire_pair(t_coder *coder)
 {
 	struct timespec	deadline;

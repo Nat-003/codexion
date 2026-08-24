@@ -6,13 +6,11 @@
 /*   By: nappasam <nappasam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/06 17:27:48 by nappasam          #+#    #+#             */
-/*   Updated: 2026/08/24 18:00:54 by nappasam         ###   ########.fr       */
+/*   Updated: 2026/08/24 18:39:45 by nappasam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
-
-
 
 int	is_before(t_request a, t_request b)
 {
@@ -62,6 +60,7 @@ void	heap_insert(t_heap *heap, t_request value)
 	sift_up(heap, heap->size);
 	heap->size++;
 }
+
 t_request	extract_min(t_heap *heap)
 {
 	t_request	min;

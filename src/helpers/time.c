@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   core.c                                             :+:      :+:    :+:   */
+/*   time.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nappasam <nappasam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/28 18:59:19 by nappasam          #+#    #+#             */
-/*   Updated: 2026/08/24 17:54:47 by nappasam         ###   ########.fr       */
+/*   Updated: 2026/08/24 18:36:30 by nappasam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void	precise_sleep(long ms)
 	while ((get_time_ms() - start) < ms)
 		usleep(400);
 }
+
 struct timespec	get_deadline(long ms)
 {
 	struct timespec	ts;

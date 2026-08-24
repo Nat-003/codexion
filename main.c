@@ -6,12 +6,11 @@
 /*   By: nappasam <nappasam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 15:51:15 by nappasam          #+#    #+#             */
-/*   Updated: 2026/08/24 17:54:19 by nappasam         ###   ########.fr       */
+/*   Updated: 2026/08/24 18:32:05 by nappasam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
-
 
 int	main(int ac, char **av)
 {

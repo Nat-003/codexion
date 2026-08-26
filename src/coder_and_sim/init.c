@@ -75,6 +75,8 @@ void	wire_coders(t_table *table)
 		table->coders[i].left_dongle = (i + n - 1) % n;
 		table->coders[i].right_dongle = i;
 		table->coders[i].table = table;
+		table->coders[i].arrival_key = 0;
+		table->coders[i].is_waiting = 0;
 		i++;
 	}
 }

@@ -33,19 +33,12 @@ void	enqueue_coder(t_coder *coder)
 {
 	t_request	request;
 
-	request.identity = coder->number;
 	if (coder->table->config->mode == FIFO)
 	{
-		request.key = coder->table->arrival_counter;
+		coder->arrival_key = coder->table->arrival_counter;
 		coder->table->arrival_counter++;
 	}
-	else if (coder->table->config->mode == EDF)
-	{
-		pthread_mutex_lock(&coder->compile_lock);
-		request.key = coder->last_compile_start
-			+ coder->table->config->time_to_burnout;
-		pthread_mutex_unlock(&coder->compile_lock);
-	}
+	request = make_request(coder);
 	heap_insert(&coder->table->heap, request);
 }
 
@@ -54,6 +47,7 @@ void	acquiring(t_coder *coder, t_dongle *left, t_dongle *right)
 	extract_min(&coder->table->heap);
 	left->state = DONGLE_HELD;
 	right->state = DONGLE_HELD;
+	coder->is_waiting = 0;
 	log_state(coder, "has taken a dongle");
 	log_state(coder, "has taken a dongle");
 }
@@ -68,7 +62,10 @@ void	acquire_pair(t_coder *coder)
 	left = &coder->table->dongles[coder->left_dongle];
 	right = &coder->table->dongles[coder->right_dongle];
 	enqueue_coder(coder);
-	while (!(am_i_top(coder->table, coder) && is_takeable(left, coder->table)
+	coder->is_waiting = 1;
+	while (!(i_win_dongle(coder, coder->left_dongle)
+			&& i_win_dongle(coder, coder->right_dongle)
+			&& is_takeable(left, coder->table)
 			&& is_takeable(right, coder->table) && left != right)
 		&& !coder->table->is_over)
 	{
@@ -78,6 +75,7 @@ void	acquire_pair(t_coder *coder)
 	}
 	if (coder->table->is_over)
 	{
+		coder->is_waiting = 0;
 		pthread_mutex_unlock(&coder->table->table_lock);
 		return ;
 	}

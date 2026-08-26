@@ -64,7 +64,9 @@ typedef struct s_coder
 	int					compile_counter;
 	int					left_dongle;
 	int					right_dongle;
+	int					is_waiting;
 	pthread_mutex_t		compile_lock;
+	long 				arrival_key;
 	t_table				*table;
 	pthread_t			thread;
 }						t_coder;
@@ -137,4 +139,7 @@ void					*coder_routine(void *arg);
 void					set_coder_time(t_table *table);
 struct timespec			get_deadline(long ms);
 void					swap(t_request *a, t_request *b);
+t_request				make_request(t_coder *coder);
+int						i_win_dongle(t_coder *coder, int d);
+int						is_before(t_request a, t_request b);
 #endif

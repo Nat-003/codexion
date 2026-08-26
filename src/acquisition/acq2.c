@@ -29,3 +29,41 @@ void	release_pair(t_coder *coder)
 	pthread_cond_broadcast(&coder->table->table_cond);
 	pthread_mutex_unlock(&coder->table->table_lock);
 }
+
+int	i_win_dongle(t_coder *coder, int d)
+{
+	int			n;
+	int			me;
+	t_coder		*other;
+	t_request	mine;
+	t_request	theirs;
+
+	n = coder->table->config->number_of_coder;
+	me = coder->number - 1;                 /* my array index */
+	if (d == me)
+		other = &coder->table->coders[(d + 1) % n];   /* d is my right dongle */
+	else
+		other = &coder->table->coders[d];             /* d is my left dongle  */
+	if (!other->is_waiting)
+		return (1);
+	mine = make_request(coder);
+	theirs = make_request(other);
+	return (is_before(mine, theirs));
+}
+
+t_request	make_request(t_coder *coder)
+{
+	t_request	r;
+
+	r.identity = coder->number;
+	if (coder->table->config->mode == FIFO)
+		r.key = coder->arrival_key;
+	else
+	{
+		pthread_mutex_lock(&coder->compile_lock);
+		r.key = coder->last_compile_start
+			+ coder->table->config->time_to_burnout;
+		pthread_mutex_unlock(&coder->compile_lock);
+	}
+	return (r);
+}

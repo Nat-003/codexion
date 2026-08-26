@@ -33,18 +33,23 @@ void	release_pair(t_coder *coder)
 int	i_win_dongle(t_coder *coder, int d)
 {
 	int			n;
-	int			me;
+	int			od;
 	t_coder		*other;
 	t_request	mine;
 	t_request	theirs;
 
 	n = coder->table->config->number_of_coder;
-	me = coder->number - 1;                 /* my array index */
-	if (d == me)
-		other = &coder->table->coders[(d + 1) % n];   /* d is my right dongle */
+	if (d == coder->number - 1)
+		other = &coder->table->coders[(d + 1) % n];
 	else
-		other = &coder->table->coders[d];             /* d is my left dongle  */
+		other = &coder->table->coders[d];
 	if (!other->is_waiting)
+		return (1);
+	if (d == other->left_dongle)
+		od = other->right_dongle;
+	else
+		od = other->left_dongle;
+	if (!is_takeable(&coder->table->dongles[od], coder->table))
 		return (1);
 	mine = make_request(coder);
 	theirs = make_request(other);

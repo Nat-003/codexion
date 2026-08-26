@@ -1,0 +1,12 @@
+# Build artifacts
+*.o
+*.a
+codexion
+codexion_tsan
+a.out
+a.exe
+
+# Editor / OS
+.vscode/
+.DS_Store
+*.swp
